@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import connectToMongo from "./config/mongo.js";
 import fishRouter from "./routes/fish-router.js";
+import plantRouter from "./routes/plant-router.js";
 import swaggerMiddleware from "./middlewares/swagger-middleware.js";
 
 const app = express();
@@ -13,6 +14,7 @@ connectToMongo();
 app.use(bodyParser.json());
 
 app.use("/api", fishRouter);
+app.use("/api", plantRouter);
 app.use("/", ...swaggerMiddleware());
 
 app.listen(process.env.PORT || 3000);

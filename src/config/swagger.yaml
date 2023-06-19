@@ -23,3 +23,17 @@ paths:
                 type: array
                 items:
                   type: string
+  /plant:
+    get:
+      tags:
+        - Plant
+      responses: 
+        "200":
+          description: Successfully fetched
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  
