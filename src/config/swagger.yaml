@@ -7,6 +7,8 @@ info:
 servers:
   - url: http://localhost:3000/api
     description: local server
+  - url: https://aquarium-3d-website-api-production.up.railway.app/api
+    description: railway server
 paths:
   /fish:
     get:
