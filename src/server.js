@@ -15,4 +15,4 @@ app.use(bodyParser.json());
 app.use("/api", fishRouter);
 app.use("/", ...swaggerMiddleware());
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
