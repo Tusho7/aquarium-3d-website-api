@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title: Aquarium Website
+  description: Aquarium Website API
+  version: 0.1.9
+
+servers:
+  - url: http://localhost:3000/api
+    description: local server
+paths:
+  /fish:
+    get:
+      tags:
+        - Fish
+      responses: 
+        "200":
+          description: Successfully fetched
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
