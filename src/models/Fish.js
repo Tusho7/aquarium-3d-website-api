@@ -49,6 +49,10 @@ const fishSchema = new Schema({
       required: true,
     },
   ],
+  id: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Fish = mongoose.model("Fish", fishSchema);
