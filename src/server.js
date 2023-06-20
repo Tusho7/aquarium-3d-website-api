@@ -1,6 +1,7 @@
 import bodyParser from "body-parser"
 import express from "express"
 import dotenv from "dotenv";
+import cors from "cors";
 
 import connectToMongo from "./config/mongo.js";
 import fishRouter from "./routes/fish-router.js";
@@ -13,6 +14,8 @@ connectToMongo();
 
 app.use(bodyParser.json());
 
+app.use(cors());
+app.use("/images", express.static("public/storage"));
 app.use("/api", fishRouter);
 app.use("/api", plantRouter);
 app.use("/", ...swaggerMiddleware());
