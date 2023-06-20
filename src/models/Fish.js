@@ -11,7 +11,7 @@ const fishSchema = new Schema({
     type: Schema.Types.String,
     required: true,
   },
-  character: {
+  careLevel: {
     type: Schema.Types.String,
     required: true,
   },
@@ -43,12 +43,12 @@ const fishSchema = new Schema({
     type: Schema.Types.String,
     required: true,
   },
-  images: {
-    png: {
+  images: [
+    {
       type: Schema.Types.String,
       required: true,
     },
-  },
+  ],
   id: {
     type: Schema.Types.Number,
     required: true,
@@ -57,4 +57,4 @@ const fishSchema = new Schema({
 
 const Fish = mongoose.model("Fish", fishSchema);
 
-export default Fish
+export default Fish;
