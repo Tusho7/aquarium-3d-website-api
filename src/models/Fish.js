@@ -15,7 +15,7 @@ const fishSchema = new Schema({
     type: String,
     required: true,
   },
-  watertemp: {
+  waterTemp: {
     type: String,
     required: true,
   },

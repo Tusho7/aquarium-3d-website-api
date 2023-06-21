@@ -8,7 +8,7 @@ export const getAllFish = async(req,res) => {
             name: document.name,
             category: document.category,
             careLevel: document.careLevel,
-            waterTemp: document.watertemp,
+            waterTemp: document.waterTemp,
             about: document.about,
             size: document.size,
             parameters: document.parameters,
