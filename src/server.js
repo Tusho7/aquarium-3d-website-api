@@ -1,24 +1,22 @@
-import bodyParser from "body-parser";
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import http from "http";
-import socketio from "socket.io";
+import { Server as SocketIO } from "socket.io";
 
 import connectToMongo from "./config/mongo.js";
 import fishRouter from "./routes/fish-router.js";
 import plantRouter from "./routes/plant-router.js";
 import swaggerMiddleware from "./middlewares/swagger-middleware.js";
 
-const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
-
 dotenv.config();
 connectToMongo();
 
-app.use(bodyParser.json());
+const app = express();
+const server = http.createServer(app);
+const io = new SocketIO(server);
 
+app.use(express.json());
 app.use(cors());
 app.use("/images", express.static("public/storage"));
 app.use("/api", fishRouter);
