@@ -14,7 +14,14 @@ connectToMongo();
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIO(server);
+const io = new SocketIO(server, {
+  cors: {
+    origin: "*", 
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 app.use(cors());
