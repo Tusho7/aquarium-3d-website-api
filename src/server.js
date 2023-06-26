@@ -1,5 +1,5 @@
-import bodyParser from "body-parser"
-import express from "express"
+import bodyParser from "body-parser";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import http from "http";
@@ -26,18 +26,38 @@ app.use("/api", plantRouter);
 app.use("/", ...swaggerMiddleware());
 
 io.on("connection", (socket) => {
-    console.log("A user connected");
+  console.log("A user connected");
 
-    socket.on("chatMessage", (message) => {
-        console.log("New chat message:", message);
+  socket.on("chatMessage", (message) => {
+    console.log("New chat message:", message);
+    io.emit("chatMessage", message);
+  });
 
-        io.emit("chatMessage", message);
-    })
+  socket.on("chatQuestion", (question) => {
+    console.log("New chat question:", question);
 
-    socket.on("disconnect", () => {
-        console.log("A user disconnected");
-    })
-})
+    let response;
+    switch (question) {
+      case "How are you?":
+        response = "OK, you?";
+        break;
+      case "What do you suggest?":
+        response = "Fishes and fishes";
+        break;
+      case "When was the site started?":
+        response = "1 month ago";
+        break;
+      default:
+        response = "I'm sorry, I don't have an answer for that.";
+    }
+
+    io.emit("chatMessage", response);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
