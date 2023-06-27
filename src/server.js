@@ -24,6 +24,7 @@ const io = new SocketIO(server, {
 });
 
 app.use(express.json());
+app.use(cors());
 app.use("/images", express.static("public/storage"));
 app.use("/api", fishRouter);
 app.use("/api", plantRouter);
