@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
         response = "ვწუხავარ ამ კითხვაზე პასუხი არ მაქვს.😥";
     }
 
-    socket.emit("chatMessage", { message: response, question });
+    io.emit("chatMessage", response);
   });
 
   socket.on("disconnect", () => {
