@@ -35,12 +35,12 @@ const plantSchema = new Schema({
         type: Schema.Types.String,
         required: true,
       },
-      images: {
-        png: {
-          type: Schema.Types.String,
+      images: [
+        {
+          type: String,
           required: true,
         },
-      },
+      ],
       id: {
         type: Schema.Types.Number,
         required: true,
