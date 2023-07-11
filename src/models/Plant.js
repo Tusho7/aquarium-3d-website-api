@@ -7,11 +7,15 @@ const plantSchema = new Schema({
         type: Schema.Types.String,
         required: true,
       },
-      growrate: {
+      co2: {
         type: Schema.Types.String,
         required: true,
       },
-      height: {
+      growthRate: {
+        type: Schema.Types.String,
+        required: true,
+      },
+      care: {
         type: Schema.Types.String,
         required: true,
       },
@@ -19,7 +23,15 @@ const plantSchema = new Schema({
         type: Schema.Types.String,
         required: true,
       },
-      co2: {
+      about: {
+        type: Schema.Types.String,
+        required: true,
+      },
+      size: {
+        type: Schema.Types.String,
+        required: true,
+      },
+      parameters: {
         type: Schema.Types.String,
         required: true,
       },
