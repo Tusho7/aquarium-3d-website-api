@@ -33,4 +33,36 @@ export const signup = async (req,res) => {
     const saveUser = await newUser.save();
 
     res.status(201).send({ user: saveUser });
+};
+
+export const loginUser = async (req,res) => {
+    const { email, password } = req.body;
+
+    if(!email || !password) {
+        return res.status(400).json({ error: "Enter all required fields" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if(!existingUser) {
+        return res.status(400).json({ error: "Wrong email or password" });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, existingUser.password);
+    if(!isValidPassword) {
+        return res.status(401).json({ error: "Wrong email or password "});
+    }else{
+        const token = jwt.sign(
+            {
+                id: existingUser.id,
+                email: existingUser.email,
+                avatar: existingUser.avatar,
+            },
+            process.env.JWT_SECRET_KEY
+        );
+
+        return res.status(201).json({
+            message: "Login Successfully",
+            token,
+        });
+    }
 }

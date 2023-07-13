@@ -58,3 +58,22 @@ paths:
       responses:
         "201":
           description: new user create successfully
+  /user/login:
+    post:
+      tags:
+        - Login
+      requestBody:
+        description: user authorization
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: login successfully
