@@ -7,7 +7,9 @@ import { Server as SocketIO } from "socket.io";
 import connectToMongo from "./config/mongo.js";
 import fishRouter from "./routes/fish-router.js";
 import plantRouter from "./routes/plant-router.js";
+import userRouter from "./routes/user-router.js";
 import swaggerMiddleware from "./middlewares/swagger-middleware.js";
+import exp from "constants";
 
 dotenv.config();
 connectToMongo();
@@ -25,9 +27,11 @@ const io = new SocketIO(server, {
 
 app.use(express.json());
 app.use(cors());
+app.use("/avatars", express.static("public/avatar"));
 app.use("/images", express.static("public/storage"));
 app.use("/api", fishRouter);
 app.use("/api", plantRouter);
+app.use("/api", userRouter);
 app.use("/", ...swaggerMiddleware());
 
 io.on("connection", (socket) => {

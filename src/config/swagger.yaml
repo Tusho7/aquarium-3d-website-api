@@ -36,4 +36,25 @@ paths:
                 type: array
                 items:
                   type: string
-  
+  /auth/signup:
+    post:
+      tags:
+        - Authorisation
+      requestBody:
+        description: Create new user
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: new user create successfully
