@@ -26,7 +26,6 @@ const io = new SocketIO(server, {
 });
 
 app.use(express.json());
-app.use(cors());
 app.use("/avatars", express.static("public/avatar"));
 app.use("/images", express.static("public/storage"));
 app.use("/api", fishRouter);
