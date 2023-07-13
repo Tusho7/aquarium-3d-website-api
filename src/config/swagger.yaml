@@ -9,6 +9,8 @@ servers:
     description: local server
   - url: https://aquarium-3d-website-api-production.up.railway.app/api
     description: railway server
+  - url: https://aquarium-website-api.onrender.com/api
+    description: render server
 paths:
   /fish:
     get:
