@@ -30,3 +30,5 @@ userRouter.post(
   multer({ storage: fileStorage, fileFilter }).single("avatar"),
   signup
 );
+
+export default userRouter;
