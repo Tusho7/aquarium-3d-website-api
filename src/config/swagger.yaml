@@ -77,3 +77,42 @@ paths:
       responses:
         "200":
           description: login successfully
+  /user:
+    get:
+      summary: Get user information
+      description: Get information about the authenticated user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          description: Bearer Token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The user's ID
+                  name:
+                    type: string
+                    description: The user's name
+        "401":
+          description: Unauthorized
+      security:
+        - bearerAuth: []
+      components:
+        securitySchemes:
+          bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT

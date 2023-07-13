@@ -65,4 +65,16 @@ export const loginUser = async (req,res) => {
             token,
         });
     }
-}
+};
+
+export const authenticate = (req, res, next) => {
+    const auth = req.header("Authorization");
+  
+    if (!auth) {
+      return res.status(401).send("Access denied. No token provided");
+    }
+  
+    const [, token] = auth.trim().split(" ");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    return res.status(200).json(decoded);
+  };
