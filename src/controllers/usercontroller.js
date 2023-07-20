@@ -106,6 +106,5 @@ export const authenticate = (req, res, next) => {
 };
 
 export const logOut = (req, res) => {
-  res.setHeader("Authorization", "");
   res.status(200).json({ message: "Logout Successful" });
 };
