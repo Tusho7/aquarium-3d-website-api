@@ -104,3 +104,8 @@ export const authenticate = (req, res, next) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
   return res.status(200).json(decoded);
 };
+
+export const logOut = (req, res) => {
+  res.setHeader("Authorization", "");
+  res.status(200).json({ message: "Logout Successful" });
+};

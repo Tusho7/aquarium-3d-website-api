@@ -25,11 +25,11 @@ const io = new SocketIO(server, {
   },
 });
 
-app.use(cors()); // Enable CORS for all routes
+app.use(cors()); 
 app.use(express.json());
 app.use("/avatars", express.static("public/avatar"));
 app.use("/images", express.static("public/storage"));
-app.options("*", cors()); // Handle OPTIONS requests for all routes
+app.options("*", cors()); 
 
 app.use("/api", fishRouter);
 app.use("/api", plantRouter);

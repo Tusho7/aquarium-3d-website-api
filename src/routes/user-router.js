@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, loginUser, authenticate } from "../controllers/usercontroller.js";
+import { signup, loginUser, authenticate, logOut } from "../controllers/usercontroller.js";
 import multer from "multer";
 import User from "../models/User.js";
 
@@ -33,6 +33,7 @@ userRouter.post(
 );
 
 userRouter.post("/user/login", loginUser);
+userRouter.post("/user/logout", logOut);
 
 userRouter.get("/user", authenticate, async (req,res) => {
   console.log(req.user._id);
