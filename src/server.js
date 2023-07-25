@@ -8,6 +8,7 @@ import connectToMongo from "./config/mongo.js";
 import fishRouter from "./routes/fish-router.js";
 import plantRouter from "./routes/plant-router.js";
 import userRouter from "./routes/user-router.js";
+import forumRouter from "./routes/forum-router.js";
 import swaggerMiddleware from "./middlewares/swagger-middleware.js";
 import exp from "constants";
 
@@ -34,6 +35,7 @@ app.options("*", cors());
 app.use("/api", fishRouter);
 app.use("/api", plantRouter);
 app.use("/api", userRouter);
+app.use("/api", forumRouter);
 app.use("/", ...swaggerMiddleware());
 
 io.on("connection", (socket) => {

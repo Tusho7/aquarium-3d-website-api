@@ -101,9 +101,18 @@ export const authenticate = (req, res, next) => {
   }
 
   const [, token] = auth.trim().split(" ");
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  return res.status(200).json(decoded);
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded;
+    console.log("Decoded user:", req.user);
+    next();
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return res.status(401).send("Invalid token");
+  }
 };
+
 
 export const logOut = (req, res) => {
   res.status(200).json({ message: "Logout Successful" });
