@@ -1,5 +1,5 @@
+import moment from "moment-timezone";
 import Topic from "../models/Topic.js";
-import mongoose from "mongoose";
 
 export const createTopic = (req, res) => {
   const { title, content } = req.body;
@@ -14,10 +14,23 @@ export const createTopic = (req, res) => {
   newTopic
     .save()
     .then((savedTopic) => {
-      res.status(201).json({ message: "Topic created successfully", topic: savedTopic });
+      const timezone = "Asia/Tbilisi";
+      const createdAtLocal = moment(savedTopic.createdAt).tz(timezone).format();
+      const responseTopic = {
+        ...savedTopic.toObject(),
+        createdAt: createdAtLocal,
+      };
+
+      res
+        .status(201)
+        .json({ message: "Topic created successfully", topic: responseTopic });
     })
     .catch((error) => {
       console.error("Error creating topic:", error);
-      res.status(500).json({ error: "Unable to create topic. An error occurred while saving." });
+      res
+        .status(500)
+        .json({
+          error: "Unable to create topic. An error occurred while saving.",
+        });
     });
 };
