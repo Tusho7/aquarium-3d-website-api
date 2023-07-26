@@ -14,8 +14,18 @@ const topicSchema = new Schema({
     type: String,
     ref: "User",
     required: true,
+  },
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    }
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-}, { timestamps: true }); 
+}); 
 
 const Topic = mongoose.model("Topic", topicSchema);
 
