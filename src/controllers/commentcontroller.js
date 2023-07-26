@@ -4,10 +4,9 @@ import Topic from "../models/Topic.js";
 export const createComment = async (req, res) => {
   const { content } = req.body;
   const { topicId, parentCommentId } = req.params;
+  const createdBy = req.user.id;
 
   try {
-    const createdBy = req.user.id;
-
     const newComment = new Comment({
       content,
       createdBy,
@@ -16,9 +15,12 @@ export const createComment = async (req, res) => {
     const savedComment = await newComment.save();
 
     if (parentCommentId) {
-      // If a parentCommentId is provided, it means this comment is a reply
-      // Add the reply to the parent comment's replies array
-      await Comment.findByIdAndUpdate(parentCommentId, {
+      const parentComment = await Comment.findById(parentCommentId);
+      if (!parentComment) {
+        return res.status(404).json({ error: "Parent comment not found" });
+      }
+
+      await parentComment.updateOne({
         $push: { replies: savedComment._id },
       });
 
@@ -28,7 +30,6 @@ export const createComment = async (req, res) => {
         reply: savedComment,
       });
     } else {
-      // If there's no parentCommentId, the comment is a top-level comment in the topic
       await Topic.findByIdAndUpdate(topicId, {
         $push: { comments: savedComment._id },
       });
@@ -43,6 +44,69 @@ export const createComment = async (req, res) => {
     console.error("Error creating comment:", error);
     res
       .status(500)
-      .json({ error: "Unable to create comment. An error occurred while saving." });
+      .json({
+        error: "Unable to create comment. An error occurred while saving.",
+      });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  const { commentId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const comment = await Comment.findOne({
+      _id: commentId,
+      createdBy: userId,
+    });
+    if (!comment) {
+      return res
+        .status(404)
+        .json({
+          error:
+            "Comment not found or you do not have permission to delete it.",
+        });
+    }
+
+    await comment.deleteOne();
+
+    await Topic.findByIdAndUpdate(comment.topicId, {
+      $pull: { comments: commentId },
+    });
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res
+      .status(500)
+      .json({
+        error: "Unable to delete comment. An error occurred while deleting.",
+      });
+  }
+};
+
+export const deleteReply = async (req, res) => {
+  const { replyId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const reply = await Comment.findOne({ _id: replyId, createdBy: userId });
+    if (!reply) {
+      return res
+        .status(404)
+        .json({
+          error: "Reply not found or you do not have permission to delete it.",
+        });
+    }
+
+    await reply.deleteOne();
+    res.status(200).json({ message: "Reply deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting reply:", error);
+    res
+      .status(500)
+      .json({
+        error: "Unable to delete reply. An error occurred while deleting.",
+      });
   }
 };

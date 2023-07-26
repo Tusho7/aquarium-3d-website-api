@@ -1,13 +1,21 @@
 import express from "express";
 import { createComment } from "../controllers/commentcontroller.js";
 import { authenticate } from "../controllers/usercontroller.js";
+import {
+  deleteComment,
+  deleteReply,
+} from "../controllers/commentcontroller.js";
 
 const commentRouter = express.Router();
 
-// Route to create a top-level comment in the topic
 commentRouter.post("/:topicId/comments", authenticate, createComment);
+commentRouter.delete("/comments/:commentId", authenticate, deleteComment);
 
-// Route to create a reply to an existing comment
-commentRouter.post("/:topicId/comments/:parentCommentId/replies", authenticate, createComment);
+commentRouter.post(
+  "/:topicId/comments/:parentCommentId/replies",
+  authenticate,
+  createComment
+);
+commentRouter.delete("/:replyId", authenticate, deleteReply);
 
 export default commentRouter;
