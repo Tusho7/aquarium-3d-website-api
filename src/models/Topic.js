@@ -24,7 +24,17 @@ const topicSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  likes: [
+    {
+      type: String,
+      ref: "User",
+    }
+  ],
+  totalLikes: {
+    type: Number,
+    default: 0,
+  },
 }); 
 
 const Topic = mongoose.model("Topic", topicSchema);
