@@ -94,7 +94,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const authenticate = (req, res, next) => {
-  const auth = req.header("Authorization");
+  const auth = req.headers.authorization;
 
   if (!auth) {
     return res.status(401).send("Access denied. No token provided");
@@ -105,14 +105,29 @@ export const authenticate = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = decoded;
-    console.log("Decoded user:", req.user);
     next();
   } catch (error) {
-    console.error("Error decoding token:", error);
-    return res.status(401).send("Invalid token");
+    res.status(401).send("Invalid token");
   }
 };
 
+export const authenticateUser = (req, res, next) => {
+  const auth = req.headers.authorization;
+
+  if (!auth) {
+    return res.status(401).send("Access denied. No token provided");
+  }
+
+  const [, token] = auth.trim().split(" ");
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    req.user = decoded;
+    return res.status(200).json(decoded);
+  } catch (error) {
+    res.status(401).send("Invalid token");
+  }
+};
 
 export const logOut = (req, res) => {
   res.status(200).json({ message: "Logout Successful" });
