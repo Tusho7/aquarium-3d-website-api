@@ -7,12 +7,13 @@ import {
   likeComment,
   likeReply,
   editComment,
-  editReply
+  editReply,
+  commentCreationRateLimit
 } from "../controllers/commentcontroller.js";
 
 const commentRouter = express.Router();
 
-commentRouter.post("/:topicId/comments", authenticate, createComment);
+commentRouter.post("/:topicId/comments", authenticate, commentCreationRateLimit, createComment);
 commentRouter.delete("/comments/:commentId", authenticate, deleteComment);
 commentRouter.post("/comments/:commentId/like", authenticate, likeComment);
 commentRouter.put("/comments/:commentId", authenticate, editComment);
@@ -20,6 +21,7 @@ commentRouter.put("/comments/:commentId", authenticate, editComment);
 commentRouter.post(
   "/:topicId/comments/:parentCommentId/replies",
   authenticate,
+  commentCreationRateLimit,
   createComment
 );
 commentRouter.delete("/:replyId", authenticate, deleteReply);

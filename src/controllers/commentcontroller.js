@@ -1,5 +1,13 @@
 import Comment from "../models/Comment.js";
 import Topic from "../models/Topic.js";
+import rateLimit from "express-rate-limit";
+
+export const commentCreationRateLimit = rateLimit({
+  windowMs: 7000, 
+  max: 2, 
+  message: "Too many comment creation requests. Please try again later.",
+});
+
 
 export const createComment = async (req, res) => {
   const { content } = req.body;
