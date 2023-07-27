@@ -112,21 +112,15 @@ export const authenticate = (req, res, next) => {
 };
 
 export const authenticateUser = (req, res, next) => {
-  const auth = req.headers.authorization;
+  const auth = req.header("Authorization");
 
   if (!auth) {
     return res.status(401).send("Access denied. No token provided");
   }
 
   const [, token] = auth.trim().split(" ");
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = decoded;
-    return res.status(200).json(decoded);
-  } catch (error) {
-    res.status(401).send("Invalid token");
-  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  return res.status(200).json(decoded);
 };
 
 export const logOut = (req, res) => {
