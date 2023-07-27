@@ -35,6 +35,14 @@ const topicSchema = new Schema({
     type: Number,
     default: 0,
   },
+  edited: {
+    type: Boolean,
+    default: false
+  },
+  updatedAt: {
+    type: Date,
+    default: null
+  }
 }); 
 
 const Topic = mongoose.model("Topic", topicSchema);

@@ -78,6 +78,30 @@ export const deleteComment = async (req, res) => {
   }
 };
 
+export const editComment = async (req, res) => {
+  const { commentId } = req.params;
+  const { content } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const comment = await Comment.findOne({ _id: commentId, createdBy: userId });
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found or you do not have permission to edit it." });
+    }
+
+    comment.content = content;
+    comment.edited = true;
+    comment.updatedAt = new Date();
+
+    await comment.save();
+    res.status(200).json({ message: "Comment edited successfully", comment });
+  } catch (error) {
+    console.error("Error editing comment:", error);
+    res.status(500).json({ error: "Unable to edit comment. An error occurred while saving." });
+  }
+};
+
+
 export const deleteReply = async (req, res) => {
   const { replyId } = req.params;
   const userId = req.user.id;
@@ -157,3 +181,25 @@ export const likeReply = async (req, res) => {
   }
 };
 
+export const editReply = async (req, res) => {
+  const { replyId } = req.params;
+  const { content } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const reply = await Comment.findOne({ _id: replyId, createdBy: userId });
+    if (!reply) {
+      return res.status(404).json({ error: "Reply not found or you do not have permission to edit it." });
+    }
+
+    reply.content = content;
+    reply.edited = true;
+    reply.updatedAt = new Date();
+
+    await reply.save();
+    res.status(200).json({ message: "Reply edited successfully", reply });
+  } catch (error) {
+    console.error("Error editing reply:", error);
+    res.status(500).json({ error: "Unable to edit reply. An error occurred while saving." });
+  }
+};

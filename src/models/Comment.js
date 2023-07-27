@@ -32,6 +32,14 @@ const commentSchema = new Schema({
     type: Number,
     default: 0,
   },
+  edited: {
+    type: Boolean,
+    default: false
+  },
+  updatedAt: {
+    type: Date,
+    default: null
+  }
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

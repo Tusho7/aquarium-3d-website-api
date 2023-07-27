@@ -12,20 +12,22 @@ export const createTopic = (req, res) => {
     title,
     content,
     createdBy: createdBy,
-    createdAt: createdAtLocal, 
+    createdAt: createdAtLocal,
   });
 
   newTopic
     .save()
     .then((savedTopic) => {
-      const createdAtFormatted = moment(createdAtLocal).format(); 
+      const createdAtFormatted = moment(createdAtLocal).format();
 
       const responseTopic = {
         ...savedTopic.toObject(),
-        createdAt: createdAtFormatted, 
+        createdAt: createdAtFormatted,
       };
 
-      res.status(201).json({ message: "Topic created successfully", topic: responseTopic });
+      res
+        .status(201)
+        .json({ message: "Topic created successfully", topic: responseTopic });
     })
     .catch((error) => {
       console.error("Error creating topic:", error);
@@ -81,7 +83,40 @@ export const likeTopic = async (req, res) => {
     res.status(200).json({ message: "Topic liked/unliked successfully" });
   } catch (error) {
     console.error("Error liking/unliking topic:", error);
-    res.status(500).json({ error: "Unable to like/unlike topic. An error occurred while saving." });
+    res
+      .status(500)
+      .json({
+        error: "Unable to like/unlike topic. An error occurred while saving.",
+      });
   }
 };
 
+export const editTopic = async (req, res) => {
+  const { topicId } = req.params;
+  const { title, content } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const topic = await Topic.findOne({ _id: topicId, createdBy: userId });
+    if (!topic) {
+      return res
+        .status(404)
+        .json({
+          error: "Topic not found or you do not have permission to edit it.",
+        });
+    }
+
+    topic.title = title;
+    topic.content = content;
+    topic.edited = true;
+    topic.updatedAt = new Date();
+
+    await topic.save();
+    res.status(200).json({ message: "Topic edited successfully", topic });
+  } catch (error) {
+    console.error("Error editing topic:", error);
+    res
+      .status(500)
+      .json({ error: "Unable to edit topic. An error occurred while saving." });
+  }
+};
