@@ -22,6 +22,16 @@ const commentSchema = new Schema({
       ref: "Comment",
     },
   ],
+  likes: [
+    {
+      type: String,
+      ref: "User",
+    },
+  ],
+  totalLikes: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);
