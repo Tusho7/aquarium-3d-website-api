@@ -65,21 +65,21 @@ export const likeTopic = async (req, res) => {
       return res.status(404).json({ error: "Topic not found." });
     }
 
-    if (topic.likes.includes(userId)) {
-      return res
-        .status(400)
-        .json({ error: "You have already liked this topic." });
+    const userIndex = topic.likes.indexOf(userId);
+
+    if (userIndex === -1) {
+      topic.likes.push(userId);
+      topic.totalLikes += 1;
+    } else {
+      topic.likes.splice(userIndex, 1);
+      topic.totalLikes -= 1;
     }
 
-    topic.likes.push(userId);
-    topic.totalLikes += 1;
-
     await topic.save();
-    res.status(200).json({ message: "Topic liked successfully" });
+    res.status(200).json({ message: "Topic liked/unliked successfully" });
   } catch (error) {
-    console.error("Error liking topic:", error);
-    res
-      .status(500)
-      .json({ error: "Unable to like topic. An error occurred while saving." });
+    console.error("Error liking/unliking topic:", error);
+    res.status(500).json({ error: "Unable to like/unlike topic. An error occurred while saving." });
   }
 };
+

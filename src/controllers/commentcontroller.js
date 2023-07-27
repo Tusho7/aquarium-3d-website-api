@@ -110,26 +110,24 @@ export const likeComment = async (req, res) => {
       return res.status(404).json({ error: "Comment not found." });
     }
 
-    if (comment.likes.includes(userId)) {
-      return res
-        .status(400)
-        .json({ error: "You have already liked this comment." });
+    const userIndex = comment.likes.indexOf(userId);
+
+    if (userIndex === -1) {
+      comment.likes.push(userId);
+      comment.totalLikes += 1;
+    } else {
+      comment.likes.splice(userIndex, 1);
+      comment.totalLikes -= 1;
     }
 
-    comment.likes.push(userId);
-    comment.totalLikes += 1;
-
     await comment.save();
-    res.status(200).json({ message: "Comment liked successfully" });
+    res.status(200).json({ message: "Comment liked/unliked successfully" });
   } catch (error) {
-    console.error("Error liking comment:", error);
-    res
-      .status(500)
-      .json({
-        error: "Unable to like comment. An error occurred while saving.",
-      });
+    console.error("Error liking/unliking comment:", error);
+    res.status(500).json({ error: "Unable to like/unlike comment. An error occurred while saving." });
   }
 };
+
 
 export const likeReply = async (req, res) => {
   const { replyId } = req.params;
