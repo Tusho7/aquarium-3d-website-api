@@ -5,25 +5,27 @@ export const createTopic = (req, res) => {
   const { title, content } = req.body;
   const createdBy = req.user.id;
 
+  const timezone = "Asia/Tbilisi";
+  const createdAtLocal = moment().tz(timezone).toDate();
+
   const newTopic = new Topic({
     title,
     content,
     createdBy: createdBy,
+    createdAt: createdAtLocal, 
   });
 
   newTopic
     .save()
     .then((savedTopic) => {
-      const timezone = "Asia/Tbilisi";
-      const createdAtLocal = moment(savedTopic.createdAt).tz(timezone).format();
+      const createdAtFormatted = moment(createdAtLocal).format(); 
+
       const responseTopic = {
         ...savedTopic.toObject(),
-        createdAt: createdAtLocal,
+        createdAt: createdAtFormatted, 
       };
 
-      res
-        .status(201)
-        .json({ message: "Topic created successfully", topic: responseTopic });
+      res.status(201).json({ message: "Topic created successfully", topic: responseTopic });
     })
     .catch((error) => {
       console.error("Error creating topic:", error);
