@@ -130,3 +130,32 @@ export const likeComment = async (req, res) => {
       });
   }
 };
+
+export const likeReply = async (req, res) => {
+  const { replyId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    const reply = await Comment.findById(replyId);
+    if (!reply) {
+      return res.status(404).json({ error: "Reply not found." });
+    }
+
+    const userIndex = reply.likes.indexOf(userId);
+
+    if (userIndex === -1) {
+      reply.likes.push(userId);
+      reply.totalLikes += 1;
+    } else {
+      reply.likes.splice(userIndex, 1);
+      reply.totalLikes -= 1;
+    }
+
+    await reply.save();
+    res.status(200).json({ message: "Reply liked/unliked successfully" });
+  } catch (error) {
+    console.error("Error liking/unliking reply:", error);
+    res.status(500).json({ error: "Unable to like/unlike reply. An error occurred while saving." });
+  }
+};
+
