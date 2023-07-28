@@ -139,3 +139,26 @@ export const editTopic = async (req, res) => {
       .json({ error: "Unable to edit topic. An error occurred while saving." });
   }
 };
+
+export const getAllTopicTitles = async (req, res) => {
+  try {
+    const topics = await Topic.find({}, "title");
+    const titles = topics.map((topic) => topic.title);
+    res.status(200).json(titles);
+  } catch (error) {
+    console.error("Error getting all topics:", error);
+    res.status(500).json({ error: "Unable to get all topics." });
+  }
+};
+
+export const getUserTopics = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const topics = await Topic.find({ createdBy: userId }, "title");
+    const titles = topics.map((topic) => topic.title);
+    res.status(200).json(titles);
+  } catch (error) {
+    console.error("Error getting user topics:", error);
+    res.status(500).json({ error: "Unable to get user topics." });
+  }
+};
