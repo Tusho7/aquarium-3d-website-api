@@ -11,9 +11,15 @@ const topicSchema = new Schema({
     required: true,
   },
   createdBy: {
-    type: String,
-    ref: "User",
-    required: true,
+    id: {
+      type: String,
+      ref: 'User',
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
   },
   comments: [
     {

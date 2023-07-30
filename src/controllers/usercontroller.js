@@ -7,7 +7,7 @@ export const signup = async (req, res) => {
   const { email, password, username } = req.body;
   const { file } = req;
 
-  if (!email || !password) {
+  if (!email || !password || !username) {
     return res.status(400).json({ error: "Enter all required fields" });
   }
 
@@ -47,6 +47,19 @@ export const signup = async (req, res) => {
       .json({ error: "Password should contain at least one number" });
   }
 
+  if (username.length < 5) {
+    return res
+      .status(400)
+      .json({ error: "Username shouble be at least 5 characters long" });
+  }
+
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    return res
+      .status(400)
+      .json({ error: "Username is already taken, please choose another one." });
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = new User({
@@ -82,6 +95,7 @@ export const loginUser = async (req, res) => {
       {
         id: existingUser.id,
         email: existingUser.email,
+        username: existingUser.username,
         avatar: existingUser.avatar,
       },
       process.env.JWT_SECRET_KEY
@@ -105,6 +119,7 @@ export const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("Decoded Token:", decoded);
     req.user = decoded;
     next();
   } catch (error) {

@@ -10,7 +10,10 @@ export const topicCreationRateLimit = rateLimit({
 
 export const createTopic = async (req, res) => {
   const { title, content } = req.body;
-  const createdBy = req.user.id;
+  const createdBy = {
+    id: req.user.id,
+    username: req.user.username,
+  };
 
   if (title.length < 10 || content.length < 10) {
     return res.status(400).json({
@@ -30,10 +33,7 @@ export const createTopic = async (req, res) => {
     const newTopic = new Topic({
       title,
       content,
-      createdBy: {
-        id: createdBy._id,
-        username: createdBy.username
-      },
+      createdBy: createdBy,
       createdAt: createdAtLocal,
     });
 
