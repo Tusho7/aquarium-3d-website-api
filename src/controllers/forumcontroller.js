@@ -162,3 +162,30 @@ export const getUserTopics = async (req, res) => {
     res.status(500).json({ error: "Unable to get user topics." });
   }
 };
+
+export const getTopicDetails = async (req,res) => {
+  const { topicTitle } = req.params
+
+  try {
+    const topic = await Topic.findOne({ title: topicTitle });
+    if(!topic) {
+      return res.status(404).json({ error: "Topic not found" });
+    }
+
+    const topicDetails = {
+      title: topic.title,
+      content: topic.content,
+      createdBy: topic.createdBy,
+      comments: topic.comments,
+      createdAt: topic.createdAt,
+      likes: topic.likes,
+      totalLikes: topic.totalLikes,
+      edited: topic.edited,
+      updatedAt: topic.updatedAt
+    }
+    res.status(200).json(topicDetails);
+  } catch (error) {
+    console.error("Error getting topic details:", error);
+    res.status(500).json({ error: "Unable to get topic details." });
+  }
+}
