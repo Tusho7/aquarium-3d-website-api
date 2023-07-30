@@ -155,25 +155,28 @@ export const getAllTopicTitles = async (req, res) => {
 };
 
 export const getUserTopics = async (req, res) => {
-  const userId = req.user.id;
+  const username = req.user.username;
   try {
-    const topics = await Topic.find({ "createdBy.id": userId }, "title");
+    const topics = await Topic.find(
+      { "createdBy.username": username },
+      "title"
+    );
+
     const titles = topics.map((topic) => topic.title);
-    res.status(200).json(titles);
   } catch (error) {
     console.error("Error getting user topics:", error);
     res.status(500).json({ error: "Unable to get user topics." });
   }
 };
 
-export const getTopicDetails = async (req,res) => {
-  const { topicTitle } = req.params
+export const getTopicDetails = async (req, res) => {
+  const { topicTitle } = req.params;
 
   try {
     const topic = await Topic.findOne({ title: topicTitle })
-    .populate("createdBy", "username")
-    .exec();
-    if(!topic) {
+      .populate("createdBy", "username")
+      .exec();
+    if (!topic) {
       return res.status(404).json({ error: "Topic not found" });
     }
 
@@ -186,11 +189,11 @@ export const getTopicDetails = async (req,res) => {
       likes: topic.likes,
       totalLikes: topic.totalLikes,
       edited: topic.edited,
-      updatedAt: topic.updatedAt
-    }
+      updatedAt: topic.updatedAt,
+    };
     res.status(200).json(topicDetails);
   } catch (error) {
     console.error("Error getting topic details:", error);
     res.status(500).json({ error: "Unable to get topic details." });
   }
-}
+};
