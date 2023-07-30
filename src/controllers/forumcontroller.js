@@ -159,16 +159,21 @@ export const getUserTopics = async (req, res) => {
   try {
     const topics = await Topic.find(
       { "createdBy.username": username },
-      "title"
+      "title _id"
     );
 
-    const titles = topics.map((topic) => topic.title);
-    res.status(200).json(titles);
+    const response = topics.map((topic) => ({
+      title: topic.title,
+      topicId: topic._id 
+    }));
+
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error getting user topics:", error);
     res.status(500).json({ error: "Unable to get user topics." });
   }
 };
+
 
 export const getTopicDetails = async (req, res) => {
   const { topicTitle } = req.params;
