@@ -163,6 +163,7 @@ export const getUserTopics = async (req, res) => {
     );
 
     const titles = topics.map((topic) => topic.title);
+    res.status(200).json(titles);
   } catch (error) {
     console.error("Error getting user topics:", error);
     res.status(500).json({ error: "Unable to get user topics." });
