@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 export const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
   const { file } = req;
 
   if (!email || !password) {
@@ -51,6 +51,7 @@ export const signup = async (req, res) => {
 
   const newUser = new User({
     email,
+    username,
     password: hashedPassword,
     avatar: "avatars/" + file.originalname,
     id: uuidv4(),

@@ -30,7 +30,10 @@ export const createTopic = async (req, res) => {
     const newTopic = new Topic({
       title,
       content,
-      createdBy: createdBy,
+      createdBy: {
+        id: createdBy._id,
+        username: createdBy.username
+      },
       createdAt: createdAtLocal,
     });
 
@@ -167,7 +170,9 @@ export const getTopicDetails = async (req,res) => {
   const { topicTitle } = req.params
 
   try {
-    const topic = await Topic.findOne({ title: topicTitle });
+    const topic = await Topic.findOne({ title: topicTitle })
+    .populate("createdBy", "username")
+    .exec();
     if(!topic) {
       return res.status(404).json({ error: "Topic not found" });
     }
