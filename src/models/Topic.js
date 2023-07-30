@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Comment from "./Comment";
 const { Schema } = mongoose;
 
 const topicSchema = new Schema({
@@ -21,12 +22,7 @@ const topicSchema = new Schema({
       required: true,
     },
   },
-  comments: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
-    }
-  ],
+  comments: [Comment],
   createdAt: {
     type: Date,
     default: Date.now
