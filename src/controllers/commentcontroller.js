@@ -3,11 +3,10 @@ import Topic from "../models/Topic.js";
 import rateLimit from "express-rate-limit";
 
 export const commentCreationRateLimit = rateLimit({
-  windowMs: 7000, 
-  max: 2, 
+  windowMs: 7000,
+  max: 2,
   message: "Too many comment creation requests. Please try again later.",
 });
-
 
 export const createComment = async (req, res) => {
   const { content } = req.body;
@@ -18,6 +17,7 @@ export const createComment = async (req, res) => {
     const newComment = new Comment({
       content,
       createdBy,
+      topicId,
     });
 
     const savedComment = await newComment.save();
@@ -92,9 +92,16 @@ export const editComment = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const comment = await Comment.findOne({ _id: commentId, createdBy: userId });
+    const comment = await Comment.findOne({
+      _id: commentId,
+      createdBy: userId,
+    });
     if (!comment) {
-      return res.status(404).json({ error: "Comment not found or you do not have permission to edit it." });
+      return res
+        .status(404)
+        .json({
+          error: "Comment not found or you do not have permission to edit it.",
+        });
     }
 
     comment.content = content;
@@ -105,10 +112,30 @@ export const editComment = async (req, res) => {
     res.status(200).json({ message: "Comment edited successfully", comment });
   } catch (error) {
     console.error("Error editing comment:", error);
-    res.status(500).json({ error: "Unable to edit comment. An error occurred while saving." });
+    res
+      .status(500)
+      .json({
+        error: "Unable to edit comment. An error occurred while saving.",
+      });
   }
 };
 
+export const getCommentsByTopicId = async (req, res) => {
+  const { topicId } = req.params;
+  try {
+    const comments = await Comment.find({ topicId });
+    if (comments.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "There are no comments for this topic." });
+    }
+
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Unable to fetch comments." });
+  }
+};
 
 export const deleteReply = async (req, res) => {
   const { replyId } = req.params;
@@ -156,10 +183,13 @@ export const likeComment = async (req, res) => {
     res.status(200).json({ message: "Comment liked/unliked successfully" });
   } catch (error) {
     console.error("Error liking/unliking comment:", error);
-    res.status(500).json({ error: "Unable to like/unlike comment. An error occurred while saving." });
+    res
+      .status(500)
+      .json({
+        error: "Unable to like/unlike comment. An error occurred while saving.",
+      });
   }
 };
-
 
 export const likeReply = async (req, res) => {
   const { replyId } = req.params;
@@ -185,7 +215,11 @@ export const likeReply = async (req, res) => {
     res.status(200).json({ message: "Reply liked/unliked successfully" });
   } catch (error) {
     console.error("Error liking/unliking reply:", error);
-    res.status(500).json({ error: "Unable to like/unlike reply. An error occurred while saving." });
+    res
+      .status(500)
+      .json({
+        error: "Unable to like/unlike reply. An error occurred while saving.",
+      });
   }
 };
 
@@ -197,7 +231,11 @@ export const editReply = async (req, res) => {
   try {
     const reply = await Comment.findOne({ _id: replyId, createdBy: userId });
     if (!reply) {
-      return res.status(404).json({ error: "Reply not found or you do not have permission to edit it." });
+      return res
+        .status(404)
+        .json({
+          error: "Reply not found or you do not have permission to edit it.",
+        });
     }
 
     reply.content = content;
@@ -208,6 +246,8 @@ export const editReply = async (req, res) => {
     res.status(200).json({ message: "Reply edited successfully", reply });
   } catch (error) {
     console.error("Error editing reply:", error);
-    res.status(500).json({ error: "Unable to edit reply. An error occurred while saving." });
+    res
+      .status(500)
+      .json({ error: "Unable to edit reply. An error occurred while saving." });
   }
 };

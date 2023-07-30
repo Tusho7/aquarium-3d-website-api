@@ -1,5 +1,5 @@
 import express from "express";
-import { createComment } from "../controllers/commentcontroller.js";
+import { createComment, getCommentsByTopicId } from "../controllers/commentcontroller.js";
 import { authenticate } from "../controllers/usercontroller.js";
 import {
   deleteComment,
@@ -17,6 +17,7 @@ commentRouter.post("/:topicId/comments", authenticate, commentCreationRateLimit,
 commentRouter.delete("/comments/:commentId", authenticate, deleteComment);
 commentRouter.post("/comments/:commentId/like", authenticate, likeComment);
 commentRouter.put("/comments/:commentId", authenticate, editComment);
+commentRouter.get("/topics/:topicId/comments", getCommentsByTopicId);
 
 commentRouter.post(
   "/:topicId/comments/:parentCommentId/replies",

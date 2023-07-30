@@ -39,7 +39,12 @@ const commentSchema = new Schema({
   updatedAt: {
     type: Date,
     default: null
-  }
+  },
+  topicId: {
+    type: Schema.Types.ObjectId,
+    ref: "Topic",
+    required: true,
+  },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);
