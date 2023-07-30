@@ -157,7 +157,7 @@ export const getAllTopicTitles = async (req, res) => {
 export const getUserTopics = async (req, res) => {
   const userId = req.user.id;
   try {
-    const topics = await Topic.find({ createdBy: userId }, "title");
+    const topics = await Topic.find({ "createdBy.id": userId }, "title");
     const titles = topics.map((topic) => topic.title);
     res.status(200).json(titles);
   } catch (error) {
