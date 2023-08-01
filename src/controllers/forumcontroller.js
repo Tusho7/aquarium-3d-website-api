@@ -164,7 +164,7 @@ export const getUserTopics = async (req, res) => {
 
     const response = topics.map((topic) => ({
       title: topic.title,
-      topicId: topic._id 
+      topicId: topic._id,
     }));
 
     res.status(200).json(response);
@@ -174,12 +174,10 @@ export const getUserTopics = async (req, res) => {
   }
 };
 
-
 export const getTopicDetails = async (req, res) => {
-  const { topicTitle } = req.params;
-
+  const { topicId } = req.params;
   try {
-    const topic = await Topic.findOne({ title: topicTitle })
+    const topic = await Topic.findById(topicId)
       .populate("createdBy", "username")
       .exec();
     if (!topic) {

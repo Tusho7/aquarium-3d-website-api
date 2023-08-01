@@ -11,7 +11,7 @@ const forumRouter = express.Router();
 
 forumRouter.get("/getAllTopics", getAllTopicTitles);
 forumRouter.get("/user-topics", authenticate, getUserTopics);
-forumRouter.get("/topics/:topicTitle", getTopicDetails);
+forumRouter.get("/topics/:topicId", getTopicDetails);
 forumRouter.post("/topics", authenticate, topicCreationRateLimit, createTopic);
 forumRouter.delete("/topics/:topicId", authenticate, deleteTopic);
 forumRouter.post("/topics/:topicId/like", authenticate, likeTopic);
