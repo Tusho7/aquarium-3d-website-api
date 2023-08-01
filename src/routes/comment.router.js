@@ -1,5 +1,5 @@
 import express from "express";
-import { createComment, getCommentsByTopicId } from "../controllers/commentcontroller.js";
+import { createComment, getCommentsByTopicId, getRepliesByCommentId } from "../controllers/commentcontroller.js";
 import { authenticate } from "../controllers/usercontroller.js";
 import {
   deleteComment,
@@ -28,5 +28,6 @@ commentRouter.post(
 commentRouter.delete("/:replyId", authenticate, deleteReply);
 commentRouter.post("/replies/:replyId/like", authenticate, likeReply);
 commentRouter.put("/:replyId", authenticate, editReply);
+commentRouter.get("/comments/:commentId/replies", getRepliesByCommentId);
 
 export default commentRouter;

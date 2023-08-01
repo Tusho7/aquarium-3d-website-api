@@ -1,6 +1,7 @@
 import Comment from "../models/Comment.js";
 import Topic from "../models/Topic.js";
 import rateLimit from "express-rate-limit";
+import User from "../models/User.js";
 
 export const commentCreationRateLimit = rateLimit({
   windowMs: 7000,
@@ -11,7 +12,9 @@ export const commentCreationRateLimit = rateLimit({
 export const createComment = async (req, res) => {
   const { content } = req.body;
   const { topicId, parentCommentId } = req.params;
-  const createdBy = req.user.id;
+  const createdBy = req.user.username;
+
+  console.log(createdBy);
 
   try {
     const newComment = new Comment({
@@ -21,6 +24,12 @@ export const createComment = async (req, res) => {
     });
 
     const savedComment = await newComment.save();
+
+    const user = await User.findOne({ username: createdBy });
+    if(!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const username = user.username
 
     if (parentCommentId) {
       const parentComment = await Comment.findById(parentCommentId);
@@ -45,7 +54,10 @@ export const createComment = async (req, res) => {
       res.status(201).json({
         message: "Comment created successfully",
         topicId,
-        comment: savedComment,
+        comment: {
+          ...savedComment.toObject(),
+          createdBy: username,
+        },
       });
     }
   } catch (error) {
@@ -249,5 +261,27 @@ export const editReply = async (req, res) => {
     res
       .status(500)
       .json({ error: "Unable to edit reply. An error occurred while saving." });
+  }
+};
+
+export const getRepliesByCommentId = async (req, res) => {
+  const { commentId } = req.params;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found." });
+    }
+
+    const replyIds = comment.replies;
+    if (replyIds.length === 0) {
+      return res.status(404).json({ error: "There are no replies for this comment." });
+    }
+
+    const replies = await Comment.find({ _id: { $in: replyIds } });
+    res.status(200).json(replies);
+  } catch (error) {
+    console.error("Error fetching replies:", error);
+    res.status(500).json({ error: "Unable to fetch replies." });
   }
 };
