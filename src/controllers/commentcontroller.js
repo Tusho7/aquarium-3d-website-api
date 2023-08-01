@@ -116,8 +116,15 @@ export const getCommentsByTopicId = async (req, res) => {
     const comments = await Comment.find({ topicId: topicId })
     .populate({
       path: "replies",
-      model: "Reply"
+      model: "Reply",
+      populate: {
+        path: "createdBy",
+        model: "User",
+      },
     })
+    .populate("createdBy")
+    .exec();
+    
     if (comments.length === 0) {
       return res
         .status(404)
