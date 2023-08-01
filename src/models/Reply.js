@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const commentSchema = new Schema({
+const replySchema = new Schema({
   content: {
     type: String,
     required: true,
@@ -15,12 +15,6 @@ const commentSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  replies: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Reply",
-    },
-  ],
   likes: [
     {
       type: Schema.Types.ObjectId,
@@ -39,13 +33,8 @@ const commentSchema = new Schema({
     type: Date,
     default: null,
   },
-  topicId: {
-    type: Schema.Types.ObjectId,
-    ref: "Topic",
-    required: true,
-  },
 });
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Reply = mongoose.model("Reply", replySchema);
 
-export default Comment;
+export default Reply;

@@ -1,5 +1,6 @@
 import Comment from "../models/Comment.js";
 import Topic from "../models/Topic.js";
+import Reply from "../models/Reply.js";
 import rateLimit from "express-rate-limit";
 import User from "../models/User.js";
 
@@ -11,10 +12,8 @@ export const commentCreationRateLimit = rateLimit({
 
 export const createComment = async (req, res) => {
   const { content } = req.body;
-  const { topicId, parentCommentId } = req.params;
+  const { topicId } = req.params;
   const createdBy = req.user.username;
-
-  console.log(createdBy);
 
   try {
     const newComment = new Comment({
@@ -23,43 +22,26 @@ export const createComment = async (req, res) => {
       topicId,
     });
 
-    const savedComment = await newComment.save();
+    await newComment.save();
 
     const user = await User.findOne({ username: createdBy });
-    if(!user) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const username = user.username
+    const username = user.username;
 
-    if (parentCommentId) {
-      const parentComment = await Comment.findById(parentCommentId);
-      if (!parentComment) {
-        return res.status(404).json({ error: "Parent comment not found" });
-      }
+    await Topic.findByIdAndUpdate(topicId, {
+      $push: { comments: newComment._id },
+    });
 
-      await parentComment.updateOne({
-        $push: { replies: savedComment._id },
-      });
-
-      res.status(201).json({
-        message: "Reply created successfully",
-        parentCommentId,
-        reply: savedComment,
-      });
-    } else {
-      await Topic.findByIdAndUpdate(topicId, {
-        $push: { comments: savedComment._id },
-      });
-
-      res.status(201).json({
-        message: "Comment created successfully",
-        topicId,
-        comment: {
-          ...savedComment.toObject(),
-          createdBy: username,
-        },
-      });
-    }
+    res.status(201).json({
+      message: "Comment created successfully",
+      topicId,
+      comment: {
+        ...newComment.toObject(),
+        createdBy: username,
+      },
+    });
   } catch (error) {
     console.error("Error creating comment:", error);
     res.status(500).json({
@@ -109,11 +91,9 @@ export const editComment = async (req, res) => {
       createdBy: userId,
     });
     if (!comment) {
-      return res
-        .status(404)
-        .json({
-          error: "Comment not found or you do not have permission to edit it.",
-        });
+      return res.status(404).json({
+        error: "Comment not found or you do not have permission to edit it.",
+      });
     }
 
     comment.content = content;
@@ -124,11 +104,9 @@ export const editComment = async (req, res) => {
     res.status(200).json({ message: "Comment edited successfully", comment });
   } catch (error) {
     console.error("Error editing comment:", error);
-    res
-      .status(500)
-      .json({
-        error: "Unable to edit comment. An error occurred while saving.",
-      });
+    res.status(500).json({
+      error: "Unable to edit comment. An error occurred while saving.",
+    });
   }
 };
 
@@ -195,11 +173,9 @@ export const likeComment = async (req, res) => {
     res.status(200).json({ message: "Comment liked/unliked successfully" });
   } catch (error) {
     console.error("Error liking/unliking comment:", error);
-    res
-      .status(500)
-      .json({
-        error: "Unable to like/unlike comment. An error occurred while saving.",
-      });
+    res.status(500).json({
+      error: "Unable to like/unlike comment. An error occurred while saving.",
+    });
   }
 };
 
@@ -227,11 +203,9 @@ export const likeReply = async (req, res) => {
     res.status(200).json({ message: "Reply liked/unliked successfully" });
   } catch (error) {
     console.error("Error liking/unliking reply:", error);
-    res
-      .status(500)
-      .json({
-        error: "Unable to like/unlike reply. An error occurred while saving.",
-      });
+    res.status(500).json({
+      error: "Unable to like/unlike reply. An error occurred while saving.",
+    });
   }
 };
 
@@ -243,11 +217,9 @@ export const editReply = async (req, res) => {
   try {
     const reply = await Comment.findOne({ _id: replyId, createdBy: userId });
     if (!reply) {
-      return res
-        .status(404)
-        .json({
-          error: "Reply not found or you do not have permission to edit it.",
-        });
+      return res.status(404).json({
+        error: "Reply not found or you do not have permission to edit it.",
+      });
     }
 
     reply.content = content;
@@ -266,6 +238,7 @@ export const editReply = async (req, res) => {
 
 export const getRepliesByCommentId = async (req, res) => {
   const { commentId } = req.params;
+  console.log(commentId);
 
   try {
     const comment = await Comment.findById(commentId);
@@ -275,13 +248,49 @@ export const getRepliesByCommentId = async (req, res) => {
 
     const replyIds = comment.replies;
     if (replyIds.length === 0) {
-      return res.status(404).json({ error: "There are no replies for this comment." });
+      return res
+        .status(404)
+        .json({ error: "There are no replies for this comment." });
     }
 
     const replies = await Comment.find({ _id: { $in: replyIds } });
+    console.log(replies);
     res.status(200).json(replies);
   } catch (error) {
     console.error("Error fetching replies:", error);
     res.status(500).json({ error: "Unable to fetch replies." });
+  }
+};
+
+export const createReply = async (req, res) => {
+  const { content } = req.body;
+  const { topicId, parentCommentId } = req.params;
+  const createdBy = req.user.username;
+
+  try {
+    const parentComment = await Comment.findById(parentCommentId);
+    if (!parentComment) {
+      return res.status(404).json({ error: "Parent comment not found" });
+    }
+
+    const newReply = new Reply({
+      content,
+      createdBy,
+    });
+    await newReply.save();
+
+    parentComment.replies.push(newReply);
+    await parentComment.save();
+
+    res.status(201).json({
+      message: "Reply created successfully",
+      parentCommentId,
+      reply: newReply,
+    });
+  } catch (error) {
+    console.error("Error creating reply:", error);
+    res.status(500).json({
+      error: "Unable to create reply. An error occurred while saving.",
+    });
   }
 };
