@@ -113,7 +113,11 @@ export const editComment = async (req, res) => {
 export const getCommentsByTopicId = async (req, res) => {
   const { topicId } = req.params;
   try {
-    const comments = await Comment.find({ topicId });
+    const comments = await Comment.find({ topicId: topicId })
+    .populate({
+      path: "replies",
+      model: "Reply"
+    })
     if (comments.length === 0) {
       return res
         .status(404)
