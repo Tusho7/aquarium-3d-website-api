@@ -8,9 +8,15 @@ const commentSchema = new Schema({
     required: true,
   },
   createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+      id: {
+      type: String,
+      ref: 'User',
+      required: true,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
   },
   createdAt: {
     type: Date,

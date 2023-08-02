@@ -18,7 +18,10 @@ export const createComment = async (req, res) => {
   try {
     const newComment = new Comment({
       content,
-      createdBy,
+      createdBy: {
+        id: req.user.id,
+        username: createdBy,
+      },
       topicId,
     });
 
@@ -124,7 +127,6 @@ export const getCommentsByTopicId = async (req, res) => {
     })
     .populate("createdBy")
     .exec();
-    
     if (comments.length === 0) {
       return res
         .status(404)
@@ -286,7 +288,10 @@ export const createReply = async (req, res) => {
 
     const newReply = new Reply({
       content,
-      createdBy,
+      createdBy: {
+        id: req.user.id,
+        username: createdBy,
+      }
     });
     await newReply.save();
 
