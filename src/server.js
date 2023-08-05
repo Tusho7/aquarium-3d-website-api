@@ -43,15 +43,27 @@ app.use("/", ...swaggerMiddleware());
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("chatMessage", (message) => {
-    console.log("New chat message:", message);
-    io.emit("chatMessage", message);
-  });
+socket.on("chatQuestion", (question) => {
+  console.log("New chat question:", question);
 
+  let response = "";
+  if(question === "რა მოწყობილობები მჭირდება აკვარიუმის გაშვებისთვის?") {
+    response ="აკვარიუმის გაშვებისთვის საჭიროა: აკვარიუმი, გრუნტი, ფილტრი, გამათბობელი და სასურველია განათება."
+  }else if (question === "როგორ გავუშვა აკვარიუმი?") {
+    response = "აკვარიუმში ჩაყარეთ გრუნტი, ჩაასხით წყალი, ჩარგეთ მცენარეები, დააყენეთ ყველა მოწყობილობა(ფილტრი,გამათბობელი და ა.შ) და დაელოდეთ ბალანსის შექმნას, დაახლოებით 1-2კვირა."
+  }else if (question === "თევზის რომელ სახეობას მირჩვთ დამწყებისთვის?") {
+    response = "დამწყებისთვის სასურველია თბილი წყლის მშვიდობიანი თევზები, რომლებიც მარტივია მოსავლელად."
+  }else {
+    response = "ვწუხვარ ამ კითხვაზე პასუხი არ მაქვს :("
+  }
+    io.emit("chatMessage", response);
+  })
   socket.on("disconnect", () => {
     console.log("A user disconnected");
   });
-});
+})
+
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
