@@ -197,7 +197,7 @@ export const likeReply = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const reply = await Comment.findById(replyId);
+    const reply = await Reply.findById(replyId);
     if (!reply) {
       return res.status(404).json({ error: "Reply not found." });
     }
