@@ -21,6 +21,7 @@ export const createComment = async (req, res) => {
       createdBy: {
         id: req.user.id,
         username: createdBy,
+        avatar: req.user.avatar,
       },
       topicId,
     });
@@ -291,6 +292,7 @@ export const createReply = async (req, res) => {
       createdBy: {
         id: req.user.id,
         username: createdBy,
+        avatar: req.user.avatar,
       }
     });
     await newReply.save();
