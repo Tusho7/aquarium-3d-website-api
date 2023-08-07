@@ -145,14 +145,18 @@ export const editTopic = async (req, res) => {
 
 export const getAllTopicTitles = async (req, res) => {
   try {
-    const topics = await Topic.find({}, "title");
-    const titles = topics.map((topic) => topic.title);
-    res.status(200).json(titles);
+    const topics = await Topic.find({}, "_id title");
+    const titlesWithIDs = topics.map((topic) => ({
+      _id: topic._id,
+      title: topic.title
+    }));
+    res.status(200).json(titlesWithIDs);
   } catch (error) {
     console.error("Error getting all topics:", error);
     res.status(500).json({ error: "Unable to get all topics." });
   }
 };
+
 
 export const getUserTopics = async (req, res) => {
   const username = req.user.username;
