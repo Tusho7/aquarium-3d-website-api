@@ -278,7 +278,7 @@ export const getRepliesByCommentId = async (req, res) => {
 
 export const createReply = async (req, res) => {
   const { content } = req.body;
-  const { topicId, parentCommentId } = req.params;
+  const { topicId, parentCommentId, parentReplyId } = req.params;
   const createdBy = req.user.username;
 
   try {
@@ -287,7 +287,17 @@ export const createReply = async (req, res) => {
       return res.status(404).json({ error: "Parent comment not found" });
     }
 
-    const replyContent = `${parentComment.createdBy.username}, ${content}`;
+    let replyContext = "";
+    if (parentReplyId) {
+      const parentReply = await Reply.findById(parentReplyId);
+      if (!parentReply) {
+        return res.status(404).json({ error: "Parent reply not found" });
+      }
+      replyContext = parentReply.content; 
+    }
+
+
+    const replyContent = `${replyContext}, + ${content}`;
 
     const newReply = new Reply({
       content: replyContent,
@@ -299,6 +309,7 @@ export const createReply = async (req, res) => {
     });
     await newReply.save();
 
+    // Update the parent comment's replies and save
     parentComment.replies.push(newReply);
     await parentComment.save();
 
@@ -314,3 +325,4 @@ export const createReply = async (req, res) => {
     });
   }
 };
+
