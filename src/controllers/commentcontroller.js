@@ -287,8 +287,10 @@ export const createReply = async (req, res) => {
       return res.status(404).json({ error: "Parent comment not found" });
     }
 
+    const replyContent = `${parentComment.createdBy.username}, +${content}`;
+
     const newReply = new Reply({
-      content,
+      content: replyContent,
       createdBy: {
         id: req.user.id,
         username: createdBy,
