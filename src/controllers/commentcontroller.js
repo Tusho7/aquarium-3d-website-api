@@ -293,11 +293,10 @@ export const createReply = async (req, res) => {
       if (!parentReply) {
         return res.status(404).json({ error: "Parent reply not found" });
       }
-      replyContext = parentReply.content; 
+      replyContext = `${parentReply.createdBy.username}, ${parentReply.content}`;
     }
 
-
-    const replyContent = `${replyContext}, + ${content}`;
+    const replyContent = parentReplyId ? `${replyContext}, ${content}` : content;
 
     const newReply = new Reply({
       content: replyContent,
@@ -305,13 +304,18 @@ export const createReply = async (req, res) => {
         id: req.user.id,
         username: createdBy,
         avatar: req.user.avatar,
-      }
+      },
     });
     await newReply.save();
 
-    // Update the parent comment's replies and save
-    parentComment.replies.push(newReply);
-    await parentComment.save();
+    if (parentReplyId) {
+      const parentReply = await Reply.findById(parentReplyId);
+      parentReply.replies.push(newReply);
+      await parentReply.save();
+    } else {
+      parentComment.replies.push(newReply);
+      await parentComment.save();
+    }
 
     res.status(201).json({
       message: "Reply created successfully",
