@@ -281,22 +281,27 @@ export const createReply = async (req, res) => {
   const { topicId, parentCommentId, parentReplyId } = req.params;
   const createdBy = req.user.username;
 
-  try {
-    const parentComment = await Comment.findById(parentCommentId);
-    if (!parentComment) {
-      return res.status(404).json({ error: "Parent comment not found" });
-    }
+  console.log("parentCommentId:", parentCommentId);
+  console.log("parentReplyId:", parentReplyId);
 
-    let replyContext = "";
-    if (parentReplyId) {
+  try {
+    let replyContent = "";
+
+    if (parentCommentId) {
+      const parentComment = await Comment.findById(parentCommentId);
+      if (!parentComment) {
+        return res.status(404).json({ error: "Parent comment not found" });
+      }
+      replyContent = `${parentComment.createdBy.username}, ${content}`;
+    } else if (parentReplyId) {
       const parentReply = await Reply.findById(parentReplyId);
       if (!parentReply) {
         return res.status(404).json({ error: "Parent reply not found" });
       }
-      replyContext = `${parentReply.createdBy.username}, ${parentReply.content}`;
+      replyContent = `${parentReply.createdBy.username}, ${content}`;
+    } else {
+      replyContent = content;
     }
-
-    const replyContent = parentReplyId ? `${replyContext}, ${content}` : content;
 
     const newReply = new Reply({
       content: replyContent,
@@ -308,13 +313,14 @@ export const createReply = async (req, res) => {
     });
     await newReply.save();
 
-    if (parentReplyId) {
+    if (parentCommentId) {
+      const parentComment = await Comment.findById(parentCommentId);
+      parentComment.replies.push(newReply);
+      await parentComment.save();
+    } else if (parentReplyId) {
       const parentReply = await Reply.findById(parentReplyId);
       parentReply.replies.push(newReply);
       await parentReply.save();
-    } else {
-      parentComment.replies.push(newReply);
-      await parentComment.save();
     }
 
     res.status(201).json({
