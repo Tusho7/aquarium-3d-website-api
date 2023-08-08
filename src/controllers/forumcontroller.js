@@ -166,6 +166,10 @@ export const getUserTopics = async (req, res) => {
       "title _id"
     );
 
+    if(topics.length === 0){
+      return res.status(200).json("შენ არ გაქვს ტოპიკები.")
+    }
+
     const response = topics.map((topic) => ({
       title: topic.title,
       topicId: topic._id,
