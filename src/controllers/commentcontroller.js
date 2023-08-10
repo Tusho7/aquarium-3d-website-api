@@ -118,26 +118,26 @@ export const getCommentsByTopicId = async (req, res) => {
   const { topicId } = req.params;
   try {
     const comments = await Comment.find({ topicId: topicId })
-    .populate({
-      path: "replies",
-      model: "Reply",
-      populate: {
-        path: "createdBy",
-        model: "User",
-      },
-    })
-    .populate("createdBy")
-    .exec();
+      .populate({
+        path: "replies",
+        model: "Reply",
+        populate: {
+          path: "createdBy",
+          model: "User",
+        },
+      })
+      .populate("createdBy")
+      .exec();
     if (comments.length === 0) {
       return res
         .status(404)
-        .json({ error: "There are no comments for this topic." });
+        .json({ error: "There are no comments for this topic.", comments: [] });
     }
 
     res.status(200).json(comments);
   } catch (error) {
     console.error("Error fetching comments:", error);
-    res.status(500).json({ error: "Unable to fetch comments." });
+    res.status(500).json({ error: "Unable to fetch comments.", comments: [] });
   }
 };
 
@@ -335,4 +335,3 @@ export const createReply = async (req, res) => {
     });
   }
 };
-
