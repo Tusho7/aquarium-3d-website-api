@@ -100,7 +100,8 @@ export const likeTopic = async (req, res) => {
     }
 
     await topic.save();
-    res.status(200).json({ message: "Topic liked/unliked successfully" });
+    const totalLikes = topic.likes.length
+    res.status(200).json({ message: "Topic liked/unliked successfully", totalLikes });
   } catch (error) {
     console.error("Error liking/unliking topic:", error);
     res.status(500).json({
