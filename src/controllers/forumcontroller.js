@@ -200,7 +200,6 @@ export const getTopicDetails = async (req, res) => {
       comments: topic.comments,
       createdAt: topic.createdAt,
       likes: topic.likes,
-      totalLikes: topic.totalLikes,
       edited: topic.edited,
       updatedAt: topic.updatedAt,
     };
