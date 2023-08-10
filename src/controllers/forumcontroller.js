@@ -81,7 +81,7 @@ export const deleteTopic = async (req, res) => {
 
 export const likeTopic = async (req, res) => {
   const { topicId } = req.params;
-  const userId = req.user.id;
+  const username = req.user.username
 
   try {
     const topic = await Topic.findById(topicId);
@@ -89,10 +89,10 @@ export const likeTopic = async (req, res) => {
       return res.status(404).json({ error: "Topic not found." });
     }
 
-    const userIndex = topic.likes.indexOf(userId);
+    const userIndex = topic.likes.indexOf(username);
 
     if (userIndex === -1) {
-      topic.likes.push(userId);
+      topic.likes.push(username);
       topic.totalLikes += 1;
     } else {
       topic.likes.splice(userIndex, 1);
