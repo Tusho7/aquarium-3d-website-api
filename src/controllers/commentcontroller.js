@@ -130,7 +130,7 @@ export const getCommentsByTopicId = async (req, res) => {
       .exec();
     if (comments.length === 0) {
       return res
-        .status(404)
+        .status(400)
         .json({ error: "There are no comments for this topic.", comments: [] });
     }
 
