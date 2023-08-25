@@ -2,6 +2,8 @@ import moment from "moment-timezone";
 import Topic from "../models/Topic.js";
 import { rateLimit } from "express-rate-limit";
 
+moment.tz.setDefault("Asia/Tbilisi");
+
 export const topicCreationRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 10,
@@ -33,19 +35,18 @@ export const createTopic = async (req, res) => {
       return res.status(400).json({ error: "Topic title must be unique." });
     }
 
-    const timezone = "Asia/Tbilisi";
-    const createdAtLocal = moment().tz(timezone).toDate();
+    const createdAtLocal = moment();
 
     const newTopic = new Topic({
       title,
       content,
       createdBy: createdBy,
-      createdAt: createdAtLocal,
+      createdAt: createdAtLocal.toDate(),
     });
 
     const savedTopic = await newTopic.save();
 
-    const createdAtFormatted = moment(createdAtLocal).format("YYYY-MM-DD HH:mm:ss");
+    const createdAtFormatted = (createdAtLocal).format("YYYY-MM-DD HH:mm:ss");
 
     const responseTopic = {
       ...savedTopic.toObject(),
