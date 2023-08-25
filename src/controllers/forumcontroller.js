@@ -45,7 +45,7 @@ export const createTopic = async (req, res) => {
 
     const savedTopic = await newTopic.save();
 
-    const createdAtFormatted = moment(createdAtLocal).format();
+    const createdAtFormatted = moment(createdAtLocal).format("YYYY-MM-DD");
 
     const responseTopic = {
       ...savedTopic.toObject(),
