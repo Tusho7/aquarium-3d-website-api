@@ -15,10 +15,16 @@ export const createTopic = async (req, res) => {
     username: req.user.username,
   };
 
-  if (title.length < 10 || content.length < 10) {
+  if ( content.length < 10) {
     return res.status(400).json({
-      error: "Title and content must be at least 10 characters long.",
+      error: "Content must be at least 10 characters long.",
     });
+  }
+
+  if(title.length > 7) {
+    return res.status(400).json({
+      error: "Title must be max 7 characters long."
+    })
   }
 
   try {
@@ -90,18 +96,21 @@ export const likeTopic = async (req, res) => {
     }
 
     const userIndex = topic.likes.indexOf(username);
+    let actionMessage = "";
 
     if (userIndex === -1) {
       topic.likes.push(username);
       topic.totalLikes += 1;
+      actionMessage = "შენ წარმატებით დაალაიქე ტოპიკი!"
     } else {
       topic.likes.splice(userIndex, 1);
       topic.totalLikes -= 1;
+      actionMessage = "შენ წარმატებით გააკეთე unlike !"
     }
 
     await topic.save();
     const totalLikes = topic.likes.length
-    res.status(200).json({ message: "Topic liked/unliked successfully", totalLikes });
+    res.status(200).json({ message: actionMessage, totalLikes });
   } catch (error) {
     console.error("Error liking/unliking topic:", error);
     res.status(500).json({
