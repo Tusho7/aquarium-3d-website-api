@@ -24,6 +24,7 @@ const io = new SocketIO(server, {
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
     credentials: true,
+    transports: ["websocket"],
   },
 });
 
