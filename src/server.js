@@ -58,6 +58,13 @@ socket.on("chatQuestion", (question) => {
   }
     io.emit("chatMessage", response);
   })
+
+  socket.on("like", (data) => {
+    io.emit("like", data);
+  })
+  socket.on("comment", (data) => {
+    io.emit("comment", data);
+  })
   socket.on("disconnect", () => {
     console.log("A user disconnected");
   });
