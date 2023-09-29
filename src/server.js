@@ -59,12 +59,17 @@ socket.on("chatQuestion", (question) => {
     io.emit("chatMessage", response);
   })
 
+  socket.on("newTopicDetail", (topicDetail) => {
+    io.emit("topicDetailUpdate", topicDetail);
+  });
+
   socket.on("like", (data) => {
     io.emit("like", data);
   })
-  socket.on("comment", (data) => {
-    io.emit("comment", data);
-  })
+  socket.on("newComment", (comment) => {
+    io.emit("commentUpdate", comment);
+  });
+
   socket.on("disconnect", () => {
     console.log("A user disconnected");
   });
